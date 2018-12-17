@@ -1,0 +1,358 @@
+<!--信息 -> 战力排行-->
+<template>
+  <div class="list-lb">
+    <Row>
+      <Col>
+        <Card>
+          <!--表格头部搜索功能-->
+          <tableTopSearch v-if="leftIsShowButton_r"
+                          :id="pageType" :searchData="searchData"
+                          @on-click-search="onClickSearch"></tableTopSearch>
+
+          <!--table-->
+          <Table class="content-table" id="content-table"
+                 :loading="loading2"
+                 :show-header="showHeader"
+                 :size="tableSize"
+                 :data="listDataShow"
+                 :columns="columnsSet"/>
+
+          <!--分页-->
+          <Page :total="pageNum" show-sizer show-elevator
+                v-if="isShowPage"
+                @on-change="pageChange"
+                @on-page-size-change="PageSizeChange" id="page-click" />
+
+          <!--查看详情弹框-->
+          <Modal v-model="seeDetail" title="详情">
+            <div class="outDetailDiv" v-if="seeDetail">
+              <p>服务器id: {{rowDatas.server}}</p>
+              <p>渠道id: {{rowDatas.channel}}</p>
+              <p>排名: {{rowDatas.rank}}</p>
+              <p>玩家Id: {{rowDatas.playerId}}</p>
+              <p>玩家名字: {{rowDatas.playerName}}</p>
+              <p>玩家总战力: {{rowDatas.totalPwoer}}</p>
+              <p>玩家总充值数: {{rowDatas.rechargeNum}}</p>
+              <p>双月卡: {{rowDatas.doubleMoonCard}}</p>
+              <p>公会名称: {{rowDatas.guildName}}</p>
+              <p>英雄id: {{rowDatas.detailInfo.leader.id}}</p>
+              <p>英雄外观ID: {{rowDatas.detailInfo.leader.skinId}}</p>
+              <p>英雄等级: {{rowDatas.detailInfo.leader.level}}</p>
+              <p>英雄阶级: {{rowDatas.detailInfo.leader.step}}</p>
+              <p>英雄星级: {{rowDatas.detailInfo.leader.star}}</p>
+              <p>英雄战斗力: {{rowDatas.detailInfo.leader.power}}</p>
+              <p></p>
+            </div>
+          </Modal>
+
+        </Card>
+      </Col>
+    </Row>
+  </div>
+</template>
+<script>
+  import editTables from './../../smallcpt/editTables'
+  import elementResizeDetectorMaker from 'element-resize-detector'
+  import tableTopSearch from './../../smallcpt/tableTopSearch'
+  var erd = elementResizeDetectorMaker()
+  export default {
+    name: 'zlRankings',
+    components: {
+      tableTopSearch,
+      editTables
+    },
+    data () {
+      return {
+        rowDatas: {},               // 当前行数据
+        seeDetail: false,           // 查看弹框
+        searchO: {},                // 当前搜索条件
+        initPages: {                // 初始化加载第几页
+          currentPage: 1,
+          rows: 10
+        },
+        loading2: false,            // 加载loading
+        pageNum: 0,                 // 表格内容条数
+        listDatas: [],              // 表格总数据
+        listDataShow: [],           // 展示数据
+        showHeader: true,           // 是否显示表头 @:show-header
+        tableSize: 'small',         // @:size
+        isShowPage: true,           // 是否显示分页条
+        limits: 10,                 // 多少条每页
+        setPageData: 0,             // 当前点击页数，应该请求对应的数据
+        searchData: [],             // 表搜索数据
+        pageType: 5,                // 页面类型（决定表搜索框的样式）
+        resourcesButton: [],        // 权限按钮数据
+        leftIsShowButton_r: false,  // 查询权限按钮是否显示
+        columnsSet: [               // 表头数据
+          {
+            title: '服务器ID',
+            sortable: true,
+            key: 'server'
+          },
+          {
+            title: '渠道id',
+            sortable: true,
+            key: 'channel'
+          },
+          {
+            title: '玩家id',
+            sortable: true,
+            key: 'playerId'
+          },
+          {
+            title: '玩家名字',
+            sortable: true,
+            key: 'playerName'
+          },
+          {
+            title: '玩家排名',
+            sortable: true,
+            key: 'rank'
+          },
+          {
+            title: '充值金额',
+            sortable: true,
+            key: 'rechargeNum'
+          },
+          {
+            title: '战力',
+            sortable: true,
+            key: 'totalPower'
+          },
+          {
+            title: '双月卡',
+            sortable: true,
+            key: 'doubleMoonCard'
+          },
+          {
+            title: '联盟名称',
+            sortable: true,
+            key: 'guildName'
+          },
+          {
+            title: '记录时间',
+            sortable: true,
+            key: 'time'
+          },
+          {
+            title: '操作',
+            key: 'action',
+            // width: 100,
+            fixed: 'right',
+            align: 'center',
+            render: (h, params) => {
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: 'text',
+                    size: 'small'
+                  },
+                  style: {
+                    marginRight: '5px',
+                    color: '#5cadff'
+                  },
+                  on: {
+                    click: () => {
+                      this.show(params)
+                    }
+                  }
+                }, '查看')
+              ])
+            }
+          }
+        ]
+      }
+    },
+    /**
+     * watch
+     */
+    watch: {
+    },
+    methods: {
+      /**
+       * 获取表数据
+       */
+      getAddListData (page) {
+        let _this = this
+        // 请求数据
+        this.apiList4._get_(window.apiUrl.api_spiritypowerranking, page, function (res) {
+          console.log('error', res)
+        }, function (res) {
+          _this.loading2 = false
+          // 时间戳转时间
+          for (var i = 0; i < res.length; i++) {
+            res[i].doubleMoonCard = res[i].doubleMoonCard ? '是' : '否'
+            res[i].censusDate = window.timeChange(res[i].censusDate).slice(0, 10)
+            res[i].createTime = window.timeChange(res[i].createTime)
+            res[i].updateTime = window.timeChange(res[i].updateTime)
+            res[i].time = window.timeChange(res[i].time)
+          }
+          _this.pageNum = res.length // 总共条数
+          _this.listDatas = res // 总数据
+          _this.listDataShow = res.slice(0, 10) // 展示数据
+        }, false)
+      },
+
+      /**
+       * 页码改变后截取当页数据显示
+       */
+      pageChange (page) {
+        this.pages = page
+        this.listDataShow = this.listDatas.slice((page - 1) * this.limits, (page - 1) * this.limits + this.limits)
+      },
+
+      /**
+       * 切换每页条数后，重新展示
+       */
+      PageSizeChange (limit) {
+        this.limits = limit
+        this.listDataShow = this.listDatas.slice(0, limit)
+      },
+
+      /**
+       * 点击查询
+       */
+      onClickSearch (res) {
+        let _this = this
+        res = {
+          name: res.server
+        }
+        this.searchO = res
+        let cp = this.copy(res) // 对象拷贝
+        let o = this.extend(cp, this.initPages) // 对象合并
+        this.getAddListData(o)
+        // 重置分页组件
+        this.limits = 10
+        this.isShowPage = false
+        setTimeout(function () {
+          _this.isShowPage = true
+        })
+      },
+
+      /**
+       * 查看详情
+       */
+      show (res) {
+        this.rowDatas = res.row
+        this.seeDetail = true
+      },
+
+      /**
+       * 获取表搜索数据
+       */
+      getTableSearchData () {
+        var res = this.apiList3.api_spirityluckcontroller_server()
+        this.searchData = res
+      },
+
+      /**
+       * 对象合并
+       */
+      extend (target, source) {
+        for (var obj in source) {
+          target[obj] = source[obj]
+        }
+        return target
+      },
+
+      /**
+       * 对象拷贝
+       */
+      copy (obj) {
+        var newobj = {}
+        for (var attr in obj) {
+          newobj[attr] = obj[attr]
+        }
+        return newobj
+      },
+
+      /**
+       * 权限按钮操作
+       * 菜单按钮（this.resourcesButton）
+       * 'c': 增加, 'r': 查询, 'u': 修改, 'd': 删除
+       */
+      powerButton () {
+        var _this = this
+        window.MEMU.forEach((e) => {
+          if (e.path === '/' + this.$route.name && (e.resources.length !== 0 || e.resources != null)) {
+            _this.resourcesButton = e.resources
+          } else {
+            if (e.childMenu.length !== 0 || e.childMenu != null) {
+              e.childMenu.forEach((e1) => {
+                if (e1.path === '/' + this.$route.name && (e1.resources.length !== 0 || e1.resources != null)) {
+                  _this.resourcesButton = e1.resources
+                } else {
+                  if (e1.childMenu.length !== 0 || e1.childMenu != null) {
+                    e1.childMenu.forEach((e2) => {
+                      if (e2.path === '/' + this.$route.name && (e2.resources.length !== 0 || e2.resources != null)) {
+                        _this.resourcesButton = e2.resources
+                      }
+                    })
+                  }
+                }
+              })
+            }
+          }
+        })
+        this.resourcesButton.forEach((e) => {
+          // 此页面目前只会在左侧存在查询按钮
+          if (e.coordinate === 'left' && e.sn === 'r') {
+            _this.leftIsShowButton_r = true
+          }
+        })
+      },
+
+      /**
+       * js时间戳转换时间
+       */
+      timeChange (inputTime) {
+        var date = new Date(inputTime)
+        var y = date.getFullYear()
+        var m = date.getMonth() + 1
+        m = m < 10 ? ('0' + m) : m
+        var d = date.getDate()
+        d = d < 10 ? ('0' + d) : d
+        var h = date.getHours()
+        h = h < 10 ? ('0' + h) : h
+        var minute = date.getMinutes()
+        var second = date.getSeconds()
+        minute = minute < 10 ? ('0' + minute) : minute
+        second = second < 10 ? ('0' + second) : second
+        if (second === '00' && minute === '00' && h === '00') {
+          return y + '-' + m + '-' + d
+        }
+        return y + '-' + m + '-' + d + ' ' + h + ':' + minute + ':' + second
+      }
+    },
+    created () {
+      // 初始化表格数据
+      // this.getAddListData(this.initPages)
+      // 初始化表搜索数据
+      this.getTableSearchData()
+      // 初始化按钮
+      this.powerButton()
+    },
+    mounted () {
+      erd.listenTo(window, 'resize', this.handleResize)
+    }
+  }
+</script>
+<style lang="less">
+  #page-click{
+    margin-top: 20px;
+  }
+  .outDetailDiv{
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 10px;
+    p{
+      width: 50%;
+      margin: 5px 0px;
+    }
+  }
+</style>
+
