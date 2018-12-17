@@ -97,8 +97,8 @@
           <Button icon="ios-search" v-on:click="newItem">新增条目</Button>
         </FormItem>
         <FormItem>
-          <FormItem v-for="(item ,index) in formDataItems" :key="index">
-            <Input v-model="item" placeholder="itemList..." style="width: auto" />
+          <FormItem v-for="(items ,index) in formDataItems" :key="index">
+            <Input v-bind:value="items" placeholder="itemList..." style="width: auto" />
             <Button icon="ios-search" v-on:click="removeItem(index)">删除</Button>
             <Button icon="ios-search" v-on:click="editItem(index)">修改</Button>
           </FormItem>
