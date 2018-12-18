@@ -13,7 +13,7 @@
     </h3>
     <h3>运营活动..</h3>
     <Table :columns="columns" :height="800" show-header align="center" :data="divisionData()">
-     <Page :total="datas.length" show-total v-on:on-change="(p) => page.current = p" v-on:on-page-size-change="(p) => page.pageSize = p" slot="footer" size="small" :current="page.current" :page-size-opts="page.sizeOpts" :page_size="page.pageSize" show-elevator show-sizer />
+      <Page :total="datas.length" show-total v-on:on-change="(p) => page.current = p" v-on:on-page-size-change="(p) => page.pageSize = p" slot="footer" size="small" :current="page.current" :page-size-opts="page.sizeOpts" :page_size="page.pageSize" show-elevator show-sizer />
     </Table>
     <Modal v-model="tableModal.open" v-on:on-ok="updateOrCreate" :mask-closable="false" :width="890">
       <h2 slot="header" style="color: red">{{tableModal['title']}}</h2>
@@ -197,7 +197,16 @@ export default {
           title: 'id',
           key: 'id',
           width: 100,
-          fixed: 'left'
+          fixed: 'left',
+          tooltip: true,
+          render: (h, params) => {
+            return h('Tooltip', {
+              props: { placement: 'bottom', theme: "light" }
+            }, [
+              params.row["id"],
+              h('span', { slot: 'content', style: { whiteSpace: 'normal', wordBreak: 'break-all' } }, params.row["id"])
+            ])
+          }
         },
         {
           title: '活动名称',
@@ -283,17 +292,47 @@ export default {
         {
           title: '图片',
           key: 'icon',
-          width: 100
+          width: 100,
+          ellipsis: true,
+          tooltip: true,
+          render: (h, params) => {
+            return h('Tooltip', {
+              props: { placement: 'bottom', theme: "light" }
+            }, [
+              params.row.icon,
+              h('span', { slot: 'content', style: { whiteSpace: 'normal', wordBreak: 'break-all' } }, params.row.icon)
+            ])
+          }
         },
         {
           title: '活动说明',
           key: 'info',
-          width: 100
+          width: 100,
+          ellipsis: true,
+          tooltip: true,
+          render: (h, params) => {
+            return h('Tooltip', {
+              props: { placement: 'bottom', theme: "light" }
+            }, [
+              params.row.info,
+              h('span', { slot: 'content', style: { whiteSpace: 'normal', wordBreak: 'break-all' } }, params.row.info)
+            ])
+          }
         },
         {
           title: '活动参数',
           key: 'params',
-          width: 100
+          width: 100,
+          ellipsis: true,
+          tooltip: true,
+          render: (h, params) => {
+            return h('Tooltip', {
+              props: { placement: 'bottom', theme: "light" }
+            }, [
+              params.row.params,
+              h('span', { slot: 'content', style: { whiteSpace: 'normal', wordBreak: 'break-all' } }, params.row.params)
+            ])
+          }
         },
         {
           title: '活动明细列表',
@@ -352,7 +391,7 @@ export default {
 
                     s.id = params.row.id;
                     s.open = params.row.open == 1 ? 0 : 1;
-                    this.openOrClose(s,params.row);
+                    this.openOrClose(s, params.row);
 
                   }
                 }
@@ -453,10 +492,10 @@ export default {
       this.tableModal.view = false;
       this.formData = params;
       this.formDataItems = [];
-      if(this.formData.startTime)
-      this.formData.startTime = new Date(this.formData.startTime);
-      if(this.formData.endTime)
-      this.formData.endTime = new Date(this.formData.endTime);
+      if (this.formData.startTime)
+        this.formData.startTime = new Date(this.formData.startTime);
+      if (this.formData.endTime)
+        this.formData.endTime = new Date(this.formData.endTime);
       // this.listItems(this.formData.itemList)
       this.tableModal.open = true;
 
@@ -498,8 +537,8 @@ export default {
     confirmItem() {
       let temp = {};
 
-      for(var i in this.item){
-        if(this.item[i])
+      for (var i in this.item) {
+        if (this.item[i])
           temp[i] = this.item[i];
       }
       this.formDataItems[this.index] = JSON.stringify(temp);
@@ -510,15 +549,18 @@ export default {
 
       let temp = this.apiList3.api_spiritygenneralcontroller_template(o);
       let arr = temp.items.map(x => JSON.stringify(x));
-      temp.itemList =  JSON.stringify(arr);
-
+      temp.itemList = JSON.stringify(arr);
+      temp.serverName = o.serverName;
       this.formData = temp;
 
 
     },
 
-    openOrClose(o,row) {
-      this.apiList4._get_(window.apiUrl.api_spiritygenneralcontroller_openorclose, o, (res) => this.$Message.error("失败"+res), (res) =>{ this.$Message.info('成功'); row.open = o.open});
+    openOrClose(o, row) {
+      this.apiList4._get_(window.apiUrl.api_spiritygenneralcontroller_openorclose, o, (res) => this.$Message.error("失败" + res), (res) => {
+        this.$Message.info('成功');
+        row.open = o.open
+      });
     },
     reloadActivity() {
       if (this.validateSeachParam()) return;
@@ -537,13 +579,16 @@ export default {
       if (this.formData.endTime) {
         this.formData.endTime = this.formData.endTime.getTime();
       }
-      if(this.formDataItems.length > 0){
-        this.formData.itemList = JSON.stringify(this.formDataItems);
+      if (this.formDataItems.length > 0) {
+
+
+        const s = this.formDataItems.map(x => JSON.parse(x));
+        this.formData.itemList = JSON.stringify(s);
       }
 
 
       this.apiList4._postj_(window.apiUrl.api_spiritygenneralcontroller_addorupdate, this.formData, (e) => this.$Message.error("操作失败：" + e), (e) => {
-        
+
         this.seachParams.serverName = this.formData.serverName;
         this.queryDatas();
         this.$Message.success("操作成功");
@@ -553,9 +598,13 @@ export default {
       if (this.validateSeachParam()) return;
       // this.datas = this.apiList3.api_spiritygenneralcontroller_loadall(this.seachParams).rows;
 
-       this.apiList4._get_(window.apiUrl.api_spiritygenneralcontroller_loadall,this.seachParams,(e) => {console.log(e);this.$Message.error("操作失败：" + e.statusText);this.datas = []}, (e) => {
+      this.apiList4._get_(window.apiUrl.api_spiritygenneralcontroller_loadall, this.seachParams, (e) => {
+        console.log(e);
+        this.$Message.error("操作失败：" + e.statusText);
+        this.datas = []
+      }, (e) => {
         console.log(e)
-      this.datas = e.rows;
+        this.datas = e.rows;
         // this.$Message.success("操作成功");
       });
 
