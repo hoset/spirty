@@ -395,7 +395,26 @@ export default {
 
                   }
                 }
-              }, '开/关')
+              }, '开/关'),
+              h('Button', {
+                props: {
+                  type: 'primary',
+                  size: 'small'
+                },
+                on: {
+                  click: () => {
+
+                    let s = {};
+
+                    s.serverName = params.row.serverName;
+
+                    s.ids = params.row["id"];
+
+                    this.deleteActivity(s, params["index"]);
+
+                  }
+                }
+              }, '删除')
             ])
           }
         }
@@ -593,6 +612,22 @@ export default {
         this.queryDatas();
         this.$Message.success("操作成功");
       })
+    },
+    deleteActivity(params, index) {
+
+      const del = (this.page.current - 1) * this.page.pageSize + index;
+      const page_ = JSON.parse(JSON.stringify(this.page));
+      console.log(page_)
+      this.apiList4._get_(window.apiUrl.api_deleteGenneralActive, params, e => this.$Message.error("操作失败：" + e), e => {
+        this.datas.splice(del, 1);
+        // queryDatas();
+        this.$Message.success("操作成功");
+      });
+      setTimeout(() => {this.page.current = page_.current;
+      this.page.pageSize = page_.pageSize;},500)
+      console.log(page_)
+      console.log(this.page);
+
     },
     queryDatas() {
       if (this.validateSeachParam()) return;
