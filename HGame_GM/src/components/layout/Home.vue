@@ -52,13 +52,13 @@
             </div>
           </div>
         </Menu> -->
-          <Menu width="220" :theme="theme" :accordion="true" @on-select="selectFn" :active-name="menu">
+          <Menu width="220" :theme="theme" :accordion="true" @on-select="selectFn" :active-name="$route.path">
             <Submenu v-for="(item,index) in menu" :name="item.id" :key="index">
               <template slot="title">
                 <Icon type="ios-analytics" />
                 {{item.menuName}}
               </template>
-              <span v-for="(subItem,index) in item.childMenu">
+              <span v-for="(subItem,index) in item.childMenu" :key='index'>
                 <MenuItem v-if="subItem.childMenu.length <=0" :name="subItem.path">
                   {{subItem.menuName}}
                 </MenuItem>
@@ -67,7 +67,7 @@
                       <Icon type="ios-analytics" />
                       {{subItem.menuName}}
                   </template>
-                  <MenuItem v-for="(sonItem,index) in subItem.childMenu"  :name="sonItem.path">
+                  <MenuItem v-for="(sonItem,index) in subItem.childMenu" :key="index" :name="sonItem.path">
                   {{sonItem.menuName}}
                 </MenuItem>
                 </Submenu>
@@ -199,7 +199,7 @@ export default {
       formValidate: {
         check_password: ''
       },
-      menu: [], // 导航菜单
+      menu:'', // 导航菜单
       ruleValidate: {
         check_password: [{
           validator: validatePass,

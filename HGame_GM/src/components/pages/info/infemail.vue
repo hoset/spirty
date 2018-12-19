@@ -33,16 +33,16 @@
       </Col>
     </Row>
     <!-- 编辑 -->
-    <Modal width='800'  v-model="editModal" @on-ok="tableEditClick(o_model_data)">
+    <Modal width='800' v-model="editModal" @on-ok="tableEditClick(o_model_data)" footer-hide :mask-closable="false">
       <p slot="header">
         <Icon type="information-circled"></Icon>
         <span>添加</span>
       </p>
       <div style="text-align:center" id="formId">
-        <Form :label-width="80" class="formClass">
+        <Form :label-width="80" class="formClass" :model="o_model_data" :rules="ruleInline" ref="o_model_data">
               <Row>
                 <Col span="12">
-                  <Form-item label="服务器">
+                  <Form-item label="服务器" prop="serverId">
                     <Select filterable v-model="o_model_data.serverId">
                       <Option v-for="item in searchData" :value="item.id" :key="item.id">{{item.text}}</Option>
                     </Select>
@@ -54,7 +54,7 @@
               </Row>
               <Row>
                 <Col span="12">
-                  <Form-item label="发送人">
+                  <Form-item label="发送人" prop="sender">
                     <Input placeholder="请输入" v-model="o_model_data.sender"></Input>
                   </Form-item>
                 </Col>
@@ -64,7 +64,7 @@
               </Row>
               <Row>
                 <Col span="12">
-                  <Form-item label="标题">
+                  <Form-item label="标题" prop="title">
                     <Input placeholder="请输入" v-model="o_model_data.title"></Input>
                   </Form-item>
                 </Col>
@@ -75,7 +75,7 @@
 
           <Row>
             <Col span="12">
-              <Form-item label="主题">
+              <Form-item label="主题" prop="topic">
                 <Input placeholder="请输入" v-model="o_model_data.topic"></Input>
               </Form-item>
             </Col>
@@ -86,7 +86,7 @@
 
           <Row>
             <Col span="12">
-              <Form-item label="内容">
+              <Form-item label="内容" prop="content">
                 <Input placeholder="请输入" v-model="o_model_data.content"></Input>
               </Form-item>
             </Col>
@@ -97,23 +97,23 @@
 
           <Row>
             <Col span="12">
-              <Form-item label="发送时间">
+              <Form-item label="发送时间" prop="sendTime">
                 <DatePicker class="sel-date" type="datetime" v-model="o_model_data.sendTime" show-week-numbers placeholder="Select date" style="width: 200px"></DatePicker>
               </Form-item>
             </Col>
-            <Col span="12">
+            <!--<Col span="12">
               <div>{{o_model_data.sendTime}}</div>
-            </Col>
+            </Col>-->
           </Row>
           <Row>
             <Col span="12">
-              <Form-item label="删除时间">
+              <Form-item label="删除时间" prop="delTime">
                 <DatePicker class="sel-date" type="datetime" v-model="o_model_data.delTime" show-week-numbers placeholder="Select date" style="width: 200px"></DatePicker>
               </Form-item>
             </Col>
-            <Col span="12">
+            <!--<Col span="12">
               <div>{{o_model_data.delTime}}</div>
-            </Col>
+            </Col>-->
           </Row>
           <Row>
             <Col span="12">
@@ -124,13 +124,13 @@
                 </i-switch>
               </Form-item>
             </Col>
-            <Col span="12">
+            <!--<Col span="12">
               <div>{{switchs}}</div>
-            </Col>
+            </Col>-->
           </Row>
           <Row>
             <Col span="12">
-              <Form-item label="玩家id">
+              <Form-item label="玩家id" prop="playerList">
                 <Input type="textarea" v-model="o_model_data.playerList" :disabled="!switchs" :autosize="true" placeholder="Enter something..." ></Input>
               </Form-item>
             </Col>
@@ -140,21 +140,21 @@
           </Row>
           <Row>
             <Col span="12">
-              <Row :gutter="6">
-                <Col span="6">
+              <Row :gutter="12">
+                <Col span="24">
                   <Form-item label="附件">
+	                  	<Col span="8">
+				                  <Select filterable v-model="modelIptO" >
+				                    	<Option v-for="item in emailData" :value="item.itemIdAndText" :key="item.itemId">{{item.itemName}}</Option>
+				                  </Select>
+			                </Col>
+			                <Col span="6">
+			                  <Input type="textarea" v-model="emailNum" :autosize="true" placeholder="数量" ></Input>
+			                </Col>
+			                <Col span="4">
+			                  <Button type="info" @click="addIptSet(modelIptO, emailNum)">确定</Button>
+			                </Col>
                   </Form-item>
-                </Col>
-                <Col span="8">
-                  <Select filterable v-model="modelIptO">
-                    <Option v-for="item in emailData" :value="item.itemIdAndText" :key="item.itemId">{{item.itemName}}</Option>
-                  </Select>
-                </Col>
-                <Col span="6">
-                  <Input type="textarea" v-model="emailNum" :autosize="true" placeholder="数量" ></Input>
-                </Col>
-                <Col span="4">
-                  <Button type="info" @click="addIptSet(modelIptO, emailNum)">确定</Button>
                 </Col>
               </Row>
             </Col>
@@ -173,6 +173,14 @@
                     <Button size="small" type="error" @click="deleteIpt(item, i)">删除</Button>
                   </span>
                 </div>
+              </div>
+            </Col>
+          </Row>
+          <Row>
+          	<Col span="12">
+              <div class="outDivAddIpt">
+              	<Button @click="editModal=false">取消</Button>
+              	<Button type="primary" @click="sendEmail('o_model_data')">确定</Button>
               </div>
             </Col>
           </Row>
@@ -202,6 +210,7 @@
   </div>
 </template>
 <script>
+	import {dateFtt} from 'common/utils/publicConfig.js'
   import editTables from './../../smallcpt/editTables'
   import elementResizeDetectorMaker from 'element-resize-detector'
   import tableTopSearch from './../../smallcpt/tableTopSearch'
@@ -223,8 +232,11 @@
         modelIptArr: [],
         modelIptO: '',
         tableSelectO: {},           // 当前点击的查询条件
-        o_model_data: {},           // model框的输入值
-        switchs: false,             // 编辑的开关
+        o_model_data: {
+        	sendTime:this.getstartTime(),
+        	delTime:this.getendTime()
+        },           // model框的输入值
+        switchs: true,             // 编辑的开关
         serverId: '',               // 输入的服务器id
         playerId: '',               // 输入的玩家id
         modeljfType: '',            // 输入的解封类型
@@ -253,6 +265,19 @@
         leftIsShowButton_c: false,  // 添加权限按钮是否显示
         rightIsShowButton_d: false, // 删除权限按钮是否显示
         editModal: false,           // 添加封禁弹框是否弹出
+        loading: true,
+        ruleInline: {
+            serverId: [{ required: true, message: '请选择服务器id', trigger: 'change' }],
+            sender: [{ required: true, message: '请输入发送人', trigger: 'blur' }],
+            sendTime: [{ required: true, message: '请选择发送时间', trigger: 'change',pattern: /.+/}],
+            delTime: [{ required: true, message: '请选择删除时间', trigger: 'change',pattern: /.+/}],
+            icon: [{ required: true, message: '请输入', trigger: 'blur' }],
+            playerList: [{ required: true, message: '请输入玩家ID', trigger: 'blur' }],
+            title: [{ required: true, message: '请输入标题', trigger: 'blur' }],
+            topic: [{ required: true, message: '请输入图标', trigger: 'blur' }],
+            content: [{ required: true, message: '请输入内容', trigger: 'blur' }]
+            
+        },
         columnsRecord: [
           {
             title: '邮件状态',
@@ -414,7 +439,16 @@
         _this.listDatasLength = res.rows.length // 当前得到的数据长度
         _this.listDataShow = res.rows.slice(0, 10) // 展示数据
       },
-
+			getstartTime(){
+				let timer=(new Date()).valueOf()
+				return dateFtt("yyyy-MM-dd hh:mm:ss",timer)
+			},
+			getendTime(){
+				var ss = 24 * 60 * 60 * 1000; //一天的毫秒数86400
+				let timer=(new Date()).valueOf()
+				var fiveDay=new Date(ss*5 + timer)
+				return dateFtt("yyyy-MM-dd hh:mm:ss",fiveDay)
+			},
       /**
        * 页码改变后截取当页数据显示
        */
@@ -539,30 +573,67 @@
         }
         this.emailData = res
       },
-
+			//发送邮件
+			sendEmail(name){
+					
+				
+				this.$refs[name].validate((valid) => {
+            if(valid){
+            		this.$confirm('是否立即发送?', '提示', {
+				          confirmButtonText: '确定',
+				          cancelButtonText: '取消',
+				          type: 'warning'
+				        }).then(() => {
+				          var obj ={
+							          adjunctMaps: this.modelIptArrReal,
+							          content: this.o_model_data.content,
+							          playerLists: this.o_model_data.playerList,
+							          delTime: this.o_model_data.delTime.getTime(),
+							          sendTime: this.o_model_data.sendTime.getTime(),
+							          sender: this.o_model_data.sender,
+							          serverName: this.o_model_data.serverId,
+							          title: this.o_model_data.title,
+							          topic: this.o_model_data.topic
+							        }
+		                
+		                 var r = this.apiList3.api_spiritymailcontroller_send(obj)
+		                 if (r.code !=0) {
+							          this.$Message.info('添加失败')
+							          return
+							        }
+						        this.$Message.info('添加成功')
+						        this.o_model_data={}
+						        this.o_model_data={
+						        	sendTime:this.getstartTime(),
+        							delTime:this.getendTime()
+						        }
+						        this.editModal=false
+						        this.getAddListData(this.tableSelectO)
+				        }).catch(() => {
+				          this.$message({
+				            type: 'info',
+				            message: '已取消发送'
+				          });          
+				        });
+            	
+            } else {
+                this.$Message.error('Fail!');
+            }
+        })
+			},
       /**
        * 添加邮件功能
        */
-      tableEditClick (res) {
-        let o = {
-          adjunctMaps: this.modelIptArrReal,
-          content: res.content,
-          delTime: res.delTime.getTime(),
-          playerLists: res.playerList,
-          sendTime: res.sendTime.getTime(),
-          sender: res.sender,
-          serverName: res.serverId,
-          title: res.title,
-          topic: res.topic
-        }
-        var r = this.apiList3.api_spiritymailcontroller_send(o)
-        if (!r) {
-          this.$Message.info('添加失败')
-          return
-        }
-        this.$Message.info('添加成功')
-        this.getAddListData(this.tableSelectO)
-      },
+//    tableEditClick (res) {
+//      var r = this.apiList3.api_spiritymailcontroller_send(o)
+//      console.log(r)
+//      if (r.code !=0) {
+//        this.$Message.info('添加失败')
+//        return
+//      }
+//      this.$Message.info('添加成功')
+//      this.getAddListData(this.tableSelectO)
+//    },
 
       /**
        * 权限按钮操作
@@ -722,7 +793,7 @@
   }
   #formId{
     overflow: auto;
-    height: 450px;
+    height: 650px;
     /*padding: 10px;*/
   }
 

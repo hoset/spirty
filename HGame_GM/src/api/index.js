@@ -163,7 +163,9 @@ window.apiUrl = {
 
   api_FlashSale:'/game_platform_tempserver/spiritflashsalecontroller/getflashsaleby',// 查询限时抢购
   api_addOrUpdateFlashSale:'/game_platform_tempserver/spiritflashsalecontroller/addorupdateflashsale', // 新增或者修改限时抢购
-  api_reloadFlashSale:'/game_platform_tempserver/spiritflashsalecontroller/reloadactivity'//重载限时抢购活动
+  api_reloadFlashSale:'/game_platform_tempserver/spiritflashsalecontroller/reloadactivity',//重载限时抢购活动
+  api_queryactivityranking:'/game_boss_schudler/newsletteractivityrankingcontroller/queryactivityranking'//日志排行
+
 
 
 

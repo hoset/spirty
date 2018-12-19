@@ -70,6 +70,7 @@ const ActionChangeLog = () => import('@/components/pages/rechargeRanking/ActionC
 const ExtraDropActivity = () => import('@/components/pages/rechargeRanking/ExtraDropActivity')
 const LimittimeExchange = () => import('@/components/pages/rechargeRanking/LimittimeExchange')
 const FlashSaleActivity = () => import('@/components/pages/rechargeRanking/FlashSaleActivity')
+const rankingLog = () => import('@/components/pages/rechargeRanking/rankingLog')
 
 const routes = [{
     path: '/',
@@ -467,6 +468,14 @@ const routes = [{
         path: '/runActivity',
         name: 'runActivity',
         component: runActivity,
+        meta: {
+          requiresAuth: true // 是否需要登录
+        }
+      },
+	  {
+        path: '/rankingLog',
+        name: 'rankingLog',
+        component: rankingLog,
         meta: {
           requiresAuth: true // 是否需要登录
         }

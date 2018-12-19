@@ -29,7 +29,8 @@ var config = {
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    baseServerUrl: 'http://192.168.30.142:8890', //http://58.87.118.170:8082 // http://192.168.20.159:8080 // http://gank.io // 'http://192.168.20.97:8080' // 'http://58.87.118.170:8081'
+//  baseServerUrl: 'http://192.168.30.142:8890', //万光明
+    baseServerUrl: 'http://192.168.30.45:8080', //测试
     proxyTable: {},
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

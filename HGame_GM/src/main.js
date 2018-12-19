@@ -6,12 +6,15 @@ import router from './router'
 import VueI18n from 'vue-i18n'
 Vue.use(VueI18n)
 import iView from 'iview'
+import elementui from 'element-ui'
+Vue.use(elementui)
 Vue.use(iView)
 import api from './api/index.js'
 Vue.use(api)
 import store from './store'
 import Cookies from 'js-cookie'
 import 'iview/dist/styles/iview.css' // 使用 CSS
+import 'element-ui/lib/theme-chalk/index.css' // 使用 CSS
 import './assets/styles/layout/layout.less' // 引入布局样式
 import './assets/styles/cover/cover.less' // 覆盖样式
 import './assets/styles/base/base.less'

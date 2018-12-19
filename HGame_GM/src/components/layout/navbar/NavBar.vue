@@ -12,8 +12,8 @@
       return {}
     },
     computed: {
-      sidebar () {
-      }
+//    sidebar () {
+//    }
     }
   }
 </script>

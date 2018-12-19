@@ -95,6 +95,7 @@
     "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
+    "element-ui": "^2.4.11",
     "uglifyjs-webpack-plugin": "^1.1.8"
   },
   "engines": {
