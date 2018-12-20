@@ -209,7 +209,7 @@ export default {
                 on: {
                   click: () => this.editModal('修改ID为' + params.row.id + "的活动", params.row)
                 }
-              }, '修改'),
+              }, '修改')/*,
               h('Button', {
                 props: {
                   type: 'primary',
@@ -219,7 +219,7 @@ export default {
                   click: () => this.editModal('ID为' + params.row.id + "的活动详情", params.row)
 
                 }
-              }, '详情')
+              }, '详情')*/
             ]);
           }
         }
@@ -232,7 +232,7 @@ export default {
       /*open  1启用0禁用*/
       status: [
         [1, "开启"],
-        [0, "禁用"]
+        [2, "禁用"]
       ],
       /*1:开服时间, 2:自然时间*/
       timeType:[
@@ -261,14 +261,19 @@ export default {
     },
     updateOrCreate() {
       this.apiList4._postj_(window.apiUrl.api_addOrUpdateExtraDropActivity, this.formData, (e) => this.$Message.error("操作失败：" + e), (e) => {
+        alert(e["code"])
+        if(e["code"] != 0)
+          this.$Message.success("操作失败");
+        else
         this.$Message.success("操作成功");
         this.tableModal.open = false;
       });
     },
     editModal(title, params = {}) {
       this.tableModal["title"] = title;
-      this.tableModal.open = true;
       this.formData = params;
+      this.formData.serverName = this.seachParams.serverName;
+      this.tableModal.open = true;
 
       params["id"] ? this.tableModal.sn = false : this.tableModal.sn = true;
 
@@ -294,7 +299,7 @@ export default {
       }
 
 
-      this.apiList4._get_(window.apiUrl.api_ExtraDropActivity, check(this.seachParams), (e) => console.log(e), (e) => this.datas = e);
+      this.apiList4._get_(window.apiUrl.api_ExtraDropActivity, check(this.seachParams), (e) => { this.mesgInfo("查询失败");this.datas = [];}, (e) => this.datas = e);
     },
     validateSeachParam() {
       return this.seachParams.serverName ? false : this.mesgInfo("serverIds 不能为空")
