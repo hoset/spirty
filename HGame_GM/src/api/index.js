@@ -169,7 +169,7 @@ window.apiUrl = {
   api_querynewsletterdatereport:'/game_boss_schudler/newsletterdatereportcontroller/querynewsletterdatereport',//日报查询
   api_querynewsletterhourdata:'/game_boss_schudler/newsletterhourdatacontroller/querynewsletterhourdata',//小时数据
   api_createfile:'/game_boss_schudler/newsletterhourdatacontroller/createfile',//小时数据创建
-  api_hourdataDownload:'/game_boss_schudler/newsletterhourdatacontroller/download'//小时数据下载
+  api_hourdataDownload:'/game_boss_schudler/newsletterhourdatacontroller/download',//小时数据下载
 
   api_deleteGenneralActive:'/game_platform_tempserver/spiritygenneralcontroller/delete'//删除运营活动
 
