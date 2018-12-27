@@ -619,6 +619,12 @@ export default {
       const page_ = JSON.parse(JSON.stringify(this.page));
       console.log(page_)
       this.apiList4._get_(window.apiUrl.api_deleteGenneralActive, params, e => this.$Message.error("操作失败：" + e), e => {
+      	if(e.code != 0){
+      		this.$Message.error("操作失败：" + e)
+      		return;
+      	}
+      	
+      	
         this.datas.splice(del, 1);
         // queryDatas();
         this.$Message.success("操作成功");
