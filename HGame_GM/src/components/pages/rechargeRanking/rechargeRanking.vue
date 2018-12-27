@@ -18,7 +18,9 @@
         <Button icon="ios-search" v-on:click="queryItem()">查询</Button>
         </h3>
           <div slot="footer">
-            <Page :total="ranking_item.length" :page-size-opts="itemPage['page-size-opts']" :page-size="itemPage['page-size']" v-on:on-change="itemPage.page" show-sizer show-total :current.sync="itemPage.current" size="small" show-elevator />
+
+            <Page :total="ranking_item.length" :page-size-opts="itemPage['page-size-opts']" :page-size="itemPage['page-size']" v-on:on-change="itemPage.page" v-on:on-page-size-change="itemPage.size" show-sizer show-total :current="itemPage.current" size="small" show-elevator />
+
           </div>
         </Table>
       </div>
@@ -145,9 +147,16 @@ export default {
         'page-size-opts': [10, 20],
         item: [],
         page: (e) => {
+         
+          this.itemPage.current = e;
           let index = (e - 1) * this.itemPage['page-size'];
           this.itemPage.item = this.ranking_item.slice(index, index + this.itemPage['page-size'] + 1);
           console.log(this.itemPage.item);
+        },
+        size:(e) => {
+          
+          this.itemPage['page-size'] = e;
+          this.itemPage.page(this.itemPage.current)
         }
       }
       /*,

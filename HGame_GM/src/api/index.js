@@ -164,18 +164,14 @@ window.apiUrl = {
   api_FlashSale:'/game_platform_tempserver/spiritflashsalecontroller/getflashsaleby',// 查询限时抢购
   api_addOrUpdateFlashSale:'/game_platform_tempserver/spiritflashsalecontroller/addorupdateflashsale', // 新增或者修改限时抢购
   api_reloadFlashSale:'/game_platform_tempserver/spiritflashsalecontroller/reloadactivity',//重载限时抢购活动
+
   api_queryactivityranking:'/game_boss_schudler/newsletteractivityrankingcontroller/queryactivityranking',//日志排行
   api_querynewsletterdatereport:'/game_boss_schudler/newsletterdatereportcontroller/querynewsletterdatereport',//日报查询
   api_querynewsletterhourdata:'/game_boss_schudler/newsletterhourdatacontroller/querynewsletterhourdata',//小时数据
   api_createfile:'/game_boss_schudler/newsletterhourdatacontroller/createfile',//小时数据创建
   api_hourdataDownload:'/game_boss_schudler/newsletterhourdatacontroller/download'//小时数据下载
-  
-  
-  
-  
 
-
-
+  api_deleteGenneralActive:'/game_platform_tempserver/spiritygenneralcontroller/delete'//删除运营活动
 
 }
 
