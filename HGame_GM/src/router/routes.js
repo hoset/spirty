@@ -71,6 +71,9 @@ const ExtraDropActivity = () => import('@/components/pages/rechargeRanking/Extra
 const LimittimeExchange = () => import('@/components/pages/rechargeRanking/LimittimeExchange')
 const FlashSaleActivity = () => import('@/components/pages/rechargeRanking/FlashSaleActivity')
 const rankingLog = () => import('@/components/pages/rechargeRanking/rankingLog')
+const queryPaper = () => import('@/components/pages/info/queryPaper')
+const hourData = () => import('@/components/pages/info/hourData')
+const queryFairy = () => import('@/components/pages/info/queryFairy')
 
 const routes = [{
     path: '/',
@@ -572,6 +575,30 @@ const routes = [{
         path: '/usersList',
         name: 'usersList',
         component: usersList,
+        meta: {
+          requiresAuth: true // 是否需要登录
+        }
+      },
+      {
+        path: '/queryPaper',
+        name: 'queryPaper',
+        component: queryPaper,
+        meta: {
+          requiresAuth: true // 是否需要登录
+        }
+      },
+      {
+        path: '/hourData',
+        name: 'hourData',
+        component: hourData,
+        meta: {
+          requiresAuth: true // 是否需要登录
+        }
+      },
+      {
+        path: '/queryFairy',
+        name: 'queryFairy',
+        component: queryFairy,
         meta: {
           requiresAuth: true // 是否需要登录
         }

@@ -58,7 +58,22 @@ export const ranklogConfig={
             id: 14,
             name: '道馆占领次数排行'
           }
-        ]
+        ],
+       //用户类型
+       userTypes:[
+   		  {
+            id: 1,
+            name: '免费用户'
+          },
+          {
+            id: 2,
+            name: '付费用户'
+          },
+          {
+            id: 3,
+            name: '全部用户'
+          }
+       ]
 }
  
 //字符串转时间
@@ -96,6 +111,5 @@ export function dateFtt(fmt,dates){
 			  for(var k in o)
 			    if(new RegExp("("+ k +")").test(fmt))   
 			  fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));   
-			  console.log(o)
 		      return fmt;
 }

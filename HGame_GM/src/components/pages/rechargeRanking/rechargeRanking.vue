@@ -1,6 +1,6 @@
 <template>
   <div class="demo-split">
-    <Split mode="vertical">
+    <div mode="vertical">
       <div slot="top" class="demo-split-pane">
         <h2>充值排行</h2>
         <Table border :loading="loading" :columns="ranking_top" height="400" :data="itemPage.item">
@@ -18,7 +18,7 @@
         <Button icon="ios-search" v-on:click="queryItem()">查询</Button>
         </h3>
           <div slot="footer">
-            <Page :total="ranking_item.length" :page-size-opts="itemPage['page-size-opts']" :page-size="itemPage['page-size']" v-on:on-change="itemPage.page" show-sizer show-total :current="itemPage.current" size="small" show-elevator />
+            <Page :total="ranking_item.length" :page-size-opts="itemPage['page-size-opts']" :page-size="itemPage['page-size']" v-on:on-change="itemPage.page" show-sizer show-total :current.sync="itemPage.current" size="small" show-elevator />
           </div>
         </Table>
       </div>
@@ -51,7 +51,7 @@
           </div> -->
         </Table>
       </div>
-    </Split>
+    </div>
   </div>
 </template>
 <script type="text/javascript">
@@ -173,10 +173,12 @@ export default {
       });
     },
     queryItem() {
-      this.loading = true,
+      this.loading = true
+      this.itemPage.current=1;
         this.apiList4._postj_(window.apiUrl.api_getRankingItem, this.searchItem, (e) => { console.log(e);
           this.loading = false }, (e) => {
           this.ranking_item = e;
+          console.log(this.itemPage)
           this.itemPage.page(1);
           this.loading = false;
         });

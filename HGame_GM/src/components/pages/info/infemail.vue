@@ -128,7 +128,7 @@
               <div>{{switchs}}</div>
             </Col>-->
           </Row>
-          <Row>
+          <Row v-if="switchs">
             <Col span="12">
               <Form-item label="玩家id" prop="playerList">
                 <Input type="textarea" v-model="o_model_data.playerList" :disabled="!switchs" :autosize="true" placeholder="Enter something..." ></Input>
@@ -143,12 +143,12 @@
               <Row :gutter="12">
                 <Col span="24">
                   <Form-item label="附件">
-	                  	<Col span="8">
-				                  <Select filterable v-model="modelIptO" >
+	                  	<Col span="8" class="mr10">
+				                  <Select filterable v-model="modelIptO">
 				                    	<Option v-for="item in emailData" :value="item.itemIdAndText" :key="item.itemId">{{item.itemName}}</Option>
 				                  </Select>
 			                </Col>
-			                <Col span="6">
+			                <Col span="6" class="mr10">
 			                  <Input type="textarea" v-model="emailNum" :autosize="true" placeholder="数量" ></Input>
 			                </Col>
 			                <Col span="4">
@@ -162,7 +162,7 @@
               <div class="outDivAddIpt">
                 <!--{{o_model_data.adjunctMap}}-->
                 <div v-for="(item, i) in modelIptArr" class="addiptOut">
-                  <span class="addipt">
+                  <span class="addipt mt10">
                     <Row :gutter="6">
                       <Col span="24">
                         <Input readonly :value="item" ></Input>
@@ -170,16 +170,16 @@
                     </Row>
                   </span>
                   <span>
-                    <Button size="small" type="error" @click="deleteIpt(item, i)">删除</Button>
+                    <Button size="small" type="error" @click="deleteIpt(item, i)" class="ml10">删除</Button>
                   </span>
                 </div>
               </div>
             </Col>
           </Row>
           <Row>
-          	<Col span="12">
+          	<Col span="24">
               <div class="outDivAddIpt">
-              	<Button @click="editModal=false">取消</Button>
+              	<Button @click="editModal=false" class="mr10">取消</Button>
               	<Button type="primary" @click="sendEmail('o_model_data')">确定</Button>
               </div>
             </Col>
@@ -595,7 +595,9 @@
 							          title: this.o_model_data.title,
 							          topic: this.o_model_data.topic
 							        }
-		                
+				          if(!this.switchs){
+				          	obj.playerLists=''
+				          }
 		                 var r = this.apiList3.api_spiritymailcontroller_send(obj)
 		                 if (r.code !=0) {
 							          this.$Message.info('添加失败')
@@ -692,6 +694,13 @@
        */
       switchChange (res) {
         this.switchs = res
+        if(!res){
+        	  console.log('隐藏')
+        }else{
+        	  console.log('显示')
+        	
+        }
+      
       },
 
       /**
@@ -796,7 +805,8 @@
     height: 650px;
     /*padding: 10px;*/
   }
-
+.mr10{margin-right: 10px!important;}
+.ml10{margin-left: 10px!important;}
   .outDivAddIpt{
     .addiptOut{
       margin: 5px 0;
