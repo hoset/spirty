@@ -605,13 +605,17 @@ export default {
         this.formData.itemList = JSON.stringify(s);
       }
 
-
+      const page_ = JSON.parse(JSON.stringify(this.page));
       this.apiList4._postj_(window.apiUrl.api_spiritygenneralcontroller_addorupdate, this.formData, (e) => this.$Message.error("操作失败：" + e), (e) => {
 
         this.seachParams.serverName = this.formData.serverName;
         this.queryDatas();
         this.$Message.success("操作成功");
       })
+        setTimeout(() => {
+        this.page.current = page_.current;
+        this.page.pageSize = page_.pageSize;
+      }, 500)
     },
     deleteActivity(params, index) {
 
@@ -619,20 +623,22 @@ export default {
       const page_ = JSON.parse(JSON.stringify(this.page));
       console.log(page_)
       this.apiList4._get_(window.apiUrl.api_deleteGenneralActive, params, e => this.$Message.error("操作失败：" + e), e => {
-      	if(e.code != 0){
-      		this.$Message.error("操作失败：" + e)
-      		return;
-      	}
-      	
-      	
+        if (e.code != 0) {
+          this.$Message.error("操作失败：" + e)
+          return;
+        }
+
+
         this.datas.splice(del, 1);
         // queryDatas();
         this.$Message.success("操作成功");
       });
-      setTimeout(() => {this.page.current = page_.current;
-      this.page.pageSize = page_.pageSize;},500)
-      console.log(page_)
-      console.log(this.page);
+
+      setTimeout(() => {
+        this.page.current = page_.current;
+        this.page.pageSize = page_.pageSize;
+      }, 500)
+
 
     },
     queryDatas() {
