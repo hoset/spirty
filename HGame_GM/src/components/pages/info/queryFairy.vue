@@ -1,4 +1,4 @@
-<!--活动 -> 配置-->
+<!--精灵查询-->
 <template>
   <div class="list-lb">
   	<h3>精灵查询</h3>
@@ -8,8 +8,8 @@
 					      <el-option :label="item.serverName" :value="item.serverId" v-for="(item,i) in serverDatas" :key='i'></el-option>
 				    </el-select>
 				  </el-form-item>
-				  <el-form-item label="选择用户类型" prop="userType">
-				    <el-select v-model="formData.userType" placeholder="选择排行类型">
+				  <el-form-item label="选择用户类型" prop="sn">
+				    <el-select v-model="formData.sn" placeholder="选择用户类型">
 					      <el-option :label="item.name" :value="item.id" v-for="(item,i) in ranklogConfig.userTypes" :key='i'></el-option>
 				    </el-select>
 				  </el-form-item>
@@ -25,18 +25,19 @@
 					    border
 					    style="width: 100%;margin-bottom: 20px;">
 					    <el-table-column
-					      type="index"
+					      prop="heroId"
+					      label="精灵ID"
 					      align='center'
-					      width="50">
+					      >
 					    </el-table-column>
 					    <el-table-column
-					      prop="logDate"
+					      prop="heroName"
 					      label="精灵名字"
 					      align='center'
 					      >
 					    </el-table-column>
 					    <el-table-column
-					      prop="logDate"
+					      prop="num"
 					      label="拥有人数"
 					      align='center'
 					      >
@@ -62,7 +63,7 @@
       return {
       		formData:{
       			 serverId:'',
-      			 userType:''
+      			 sn:''
       		},
       		//分页信息
       		paginations:{
@@ -97,15 +98,15 @@
 	        	var that=this
 	        	if(valid){
         		 	console.log(this.formData)
-        		 		this.apiList4._postj_(window.apiUrl.api_querynewsletterdatereport,this.formData,function (err) {
+        		 		this.apiList4._get_(window.apiUrl.api_queryplayerownheros,this.formData,function (err) {
         		 			console.log(err)
         		 			that.$Message.error('err.statusText')
         		 			 that.allDatas=[]
         		 			 that.setPaginations()
         		 		},function(res){
         		 			console.log(res)
-        		 			 if(res.length >0){
-	        		 			 		that.allDatas=res
+        		 			 if(res.rows.length >0){
+	        		 			 		that.allDatas=res.rows
 	        		 			 		that.setPaginations()
         		 			 }else{
         		 			 		that.$Message.error('暂无数据！')

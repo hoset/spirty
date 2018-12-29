@@ -61,6 +61,7 @@ export const ranklogConfig={
         ],
        //用户类型
        userTypes:[
+
    		  {
             id: 1,
             name: '免费用户'
