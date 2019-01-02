@@ -170,6 +170,10 @@ window.apiUrl = {
   api_querynewsletterhourdata:'/game_boss_schudler/newsletterhourdatacontroller/querynewsletterhourdata',//小时数据
   api_createfile:'/game_boss_schudler/newsletterhourdatacontroller/createfile',//小时数据创建
   api_hourdataDownload:'/game_boss_schudler/newsletterhourdatacontroller/download',//小时数据下载
+  api_queryplayerownheros:'/game_boss_schudler/newsletterplayerownheroscontroller/queryplayerownheros',//精灵查询
+
+
+
 
   api_deleteGenneralActive:'/game_platform_tempserver/spiritygenneralcontroller/delete',//删除运营活动
   api_queryplayerownheros:'/game_boss_schudler/newsletterplayerownheroscontroller/queryplayerownheros'//精灵查询

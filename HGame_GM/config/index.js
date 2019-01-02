@@ -29,6 +29,7 @@ var config = {
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
+
     // baseServerUrl: 'http://192.168.30.142:8890', //万光明
     baseServerUrl: 'http://192.168.30.45:8080', //测试
     proxyTable: {},
