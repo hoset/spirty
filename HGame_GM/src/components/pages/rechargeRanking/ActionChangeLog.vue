@@ -18,7 +18,7 @@
     <Button icon="ios-search" v-on:click="queryItems()">查询</Button>
 </h3>
     <Table :columns="columns" height="800" :data="divisionData()" show-header>
-      <h1 slot="header">道具使用日志</h1>
+      <h1 slot="header">动作变化日志</h1>
       <Page :total="datas.length" show-total v-on:on-change="(p) => page.current = p" v-on:on-page-size-change="(p) => page.pageSize = p" slot="footer" size="small" :current="page.current" :page-size-opts="page.sizeOpts" :page_size="page.pageSize" show-elevator show-sizer />
     </Table>
   </div>
